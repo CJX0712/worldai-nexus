@@ -1,0 +1,149 @@
+openapi: "3.0.3"
+info:
+  title: WorldAI Nexus API
+  version: "1.0.0"
+  description: 模块化、端到端可运行的本地优先 AI 系统 HTTP 接口。作者：晨星。
+servers:
+  - url: http://localhost:8000
+paths:
+  /health:
+    get:
+      summary: 健康检查
+      responses:
+        "200":
+          description: 服务正常
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status: { type: string }
+                  llm: { type: string }
+                  embedder: { type: string }
+                  vectorstore: { type: string }
+  /ingest:
+    post:
+      summary: 文档入库
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                text: { type: string }
+                doc_id: { type: string }
+                file: { type: string }
+      responses:
+        "200":
+          description: 入库成功
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  chunks: { type: integer }
+        "400":
+          description: 缺少 text 或 file
+  /chat:
+    post:
+      summary: 问答（自动路由工具 / RAG）
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [query]
+              properties:
+                query: { type: string }
+                k: { type: integer, default: 5 }
+                use_rag: { type: boolean, default: true }
+      responses:
+        "200":
+          description: 回答结果
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  answer: { type: string }
+                  model: { type: string }
+                  sources:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        chunk_id: { type: string }
+                        doc_id: { type: string }
+                        score: { type: number }
+                        text: { type: string }
+                  tool_calls:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        name: { type: string }
+                        result: { type: string }
+  /search:
+    post:
+      summary: 混合检索
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [query]
+              properties:
+                query: { type: string }
+                k: { type: integer, default: 5 }
+      responses:
+        "200":
+          description: 检索命中
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  hits:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        chunk_id: { type: string }
+                        doc_id: { type: string }
+                        score: { type: number }
+                        text: { type: string }
+  /tools:
+    get:
+      summary: 列出已注册工具
+      responses:
+        "200":
+          description: 工具清单
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  tools:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        name: { type: string }
+                        description: { type: string }
+  /eval:
+    get:
+      summary: 运行内置评估
+      responses:
+        "200":
+          description: 评估结果
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  passed: { type: integer }
+                  total: { type: integer }
+                  ok: { type: boolean }

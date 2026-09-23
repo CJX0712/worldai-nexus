@@ -1,0 +1,17 @@
+services:
+  worldai:
+    build: .
+    image: worldai-nexus:1.0.0
+    container_name: worldai-nexus
+    ports:
+      - "8000:8000"
+    environment:
+      - WORLDAI_LLM=mock
+      - WORLDAI_EMBEDDER=mock
+      - WORLDAI_VECTORSTORE=memory
+      - WORLDAI_HOST=0.0.0.0
+      - WORLDAI_PORT=8000
+      - WORLDAI_LOG_LEVEL=INFO
+    volumes:
+      - ./data:/app/data
+    restart: unless-stopped

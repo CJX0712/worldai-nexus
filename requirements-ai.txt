@@ -1,0 +1,10 @@
+# WorldAI Nexus - 生产级 AI 后端依赖 (可选)
+# 启用语义检索 / 本地模型 / PDF 入库时安装: pip install -r requirements-ai.txt
+# 作者: 晨星
+numpy==2.5.3
+faiss-cpu==1.15.0
+fastembed==0.8.0
+llama-cpp-python==0.3.19
+pypdf==6.18.1
+rank-bm25==0.2.2
+sse-starlette==3.4.11

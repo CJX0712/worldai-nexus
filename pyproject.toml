@@ -1,0 +1,38 @@
+[project]
+name = "worldai-nexus"
+version = "1.0.0"
+description = "WorldAI Nexus - 模块化、端到端可运行的本地优先 AI 系统"
+authors = [{ name = "晨星" }]
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+dependencies = [
+    "fastapi==0.141.1",
+    "uvicorn==0.53.0",
+    "pydantic==2.13.5",
+    "loguru==0.7.3",
+    "httpx==0.28.1",
+]
+
+[project.optional-dependencies]
+ai = [
+    "numpy==2.5.3",
+    "faiss-cpu==1.15.0",
+    "fastembed==0.8.0",
+    "llama-cpp-python==0.3.19",
+    "pypdf==6.18.1",
+    "rank-bm25==0.2.2",
+    "sse-starlette==3.4.11",
+]
+
+[project.scripts]
+worldai = "cli.main:main"
+worldai-serve = "api.main:main"
+
+[project.urls]
+Homepage = "https://github.com/CJX0712/worldai-nexus-0869"
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["tests"]
+addopts = "-q"

@@ -1,0 +1,8 @@
+# WorldAI Nexus - 核心运行时依赖 (轻量，跨平台保证可安装)
+# 仅含 HTTP 服务与编排所需；默认 Mock 实现无需任何重型 ML 依赖即可端到端运行。
+# 作者: 晨星
+fastapi==0.141.1
+uvicorn==0.53.0
+pydantic==2.13.5
+loguru==0.7.3
+httpx==0.28.1

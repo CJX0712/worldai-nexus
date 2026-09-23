@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WorldAI Nexus · 模块化 AI 系统</title>
+<style>
+  :root{
+    --bg:#f6f8fb; --panel:#ffffff; --ink:#1f2933; --muted:#6b7785;
+    --line:#e3e8ef; --brand:#2f5fe0; --brand-soft:#eaf0ff;
+    --user:#2f5fe0; --assistant:#ffffff; --ok:#1f9d55; --warn:#c2740b;
+    --radius:14px; --shadow:0 1px 3px rgba(16,24,40,.08),0 4px 16px rgba(16,24,40,.06);
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans SC",Roboto,Helvetica,Arial,sans-serif;
+    background:var(--bg);color:var(--ink);display:flex;flex-direction:column;height:100vh}
+  header{display:flex;align-items:center;gap:12px;padding:14px 20px;background:var(--panel);
+    border-bottom:1px solid var(--line)}
+  header .logo{width:34px;height:34px;flex:0 0 auto}
+  header h1{font-size:17px;margin:0;font-weight:650;letter-spacing:.2px}
+  header .sub{font-size:12px;color:var(--muted);margin-top:2px}
+  header .status{margin-left:auto;display:flex;align-items:center;gap:8px;font-size:12px;color:var(--muted)}
+  .dot{width:9px;height:9px;border-radius:50%;background:var(--warn)}
+  .dot.on{background:var(--ok)}
+  main{flex:1;display:flex;min-height:0}
+  /* 侧栏：入库 */
+  aside{width:300px;flex:0 0 auto;border-right:1px solid var(--line);background:var(--panel);
+    display:flex;flex-direction:column;padding:16px;gap:12px}
+  aside h2{font-size:13px;margin:0 0 4px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.6px}
+  textarea{width:100%;flex:1;resize:none;border:1px solid var(--line);border-radius:10px;padding:10px;
+    font:13px/1.5 inherit;color:var(--ink);background:#fbfcfe}
+  textarea:focus{outline:none;border-color:var(--brand)}
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;cursor:pointer;border:none;
+    border-radius:10px;padding:10px 14px;font-size:13px;font-weight:600;background:var(--brand);color:#fff;
+    transition:filter .15s}
+  .btn:hover{filter:brightness(1.05)}
+  .btn.ghost{background:var(--brand-soft);color:var(--brand)}
+  .hint{font-size:12px;color:var(--muted);line-height:1.5}
+  /* 对话区 */
+  section{flex:1;display:flex;flex-direction:column;min-width:0}
+  .log{flex:1;overflow-y:auto;padding:22px;display:flex;flex-direction:column;gap:16px}
+  .msg{max-width:78%;padding:12px 14px;border-radius:14px;line-height:1.6;font-size:14px;white-space:pre-wrap;word-break:break-word}
+  .msg.user{align-self:flex-end;background:var(--user);color:#fff;border-bottom-right-radius:4px}
+  .msg.assistant{align-self:flex-start;background:var(--assistant);border:1px solid var(--line);
+    box-shadow:var(--shadow);border-bottom-left-radius:4px}
+  .src{margin-top:10px;border-top:1px dashed var(--line);padding-top:8px;font-size:12px;color:var(--muted)}
+  .src .item{margin:4px 0;padding-left:10px;border-left:3px solid var(--brand-soft)}
+  .src summary{cursor:pointer;color:var(--brand);font-weight:600}
+  .foot{display:flex;gap:10px;padding:14px 20px;border-top:1px solid var(--line);background:var(--panel)}
+  .foot input{flex:1;border:1px solid var(--line);border-radius:10px;padding:11px 14px;font-size:14px;color:var(--ink)}
+  .foot input:focus{outline:none;border-color:var(--brand)}
+  .icon{flex:0 0 auto}
+  .toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);background:#1f2933;color:#fff;
+    padding:9px 16px;border-radius:10px;font-size:13px;opacity:0;transition:opacity .25s;pointer-events:none}
+  .toast.show{opacity:1}
+</style>
+</head>
+<body>
+<header>
+  <svg class="logo" viewBox="0 0 24 24" fill="none" stroke="#2f5fe0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M12 2 2 7l10 5 10-5-10-5Z"/><path d="m2 17 10 5 10-5"/><path d="m2 12 10 5 10-5"/>
+  </svg>
+  <div>
+    <h1>WorldAI Nexus</h1>
+    <div class="sub">晨星 · 模块化端到端 AI 系统</div>
+  </div>
+  <div class="status"><span id="dot" class="dot"></span><span id="statusText">连接中…</span></div>
+</header>
+
+<main>
+  <aside>
+    <h2>知识库入库</h2>
+    <textarea id="ingestText" placeholder="将文档内容粘贴到此处，点击「入库文档」即可被检索与引用。支持 RAG 检索增强。"></textarea>
+    <button class="btn" id="ingestBtn">
+      <svg class="icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v14a9 3 0 0 0 18 0V5"/><path d="M3 12a9 3 0 0 0 18 0"/></svg>
+      入库文档
+    </button>
+    <div class="hint">默认后端为离线 Mock 实现，无需模型权重或 API Key 即可完整体验「入库 → 检索 → 生成」链路。配置环境变量可切换 OpenAI 兼容 / llama.cpp / FAISS / FastEmbed 等生产实现。</div>
+    <button class="btn ghost" id="evalBtn">
+      <svg class="icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="m9 11 3 3L22 4"/></svg>
+      运行内置评估
+    </button>
+    <div id="evalOut" class="hint"></div>
+  </aside>
+
+  <section>
+    <div class="log" id="log"></div>
+    <div class="foot">
+      <input id="q" placeholder="向 Agent 提问，例如：WorldAI Nexus 是什么？ 或 12*(3+4)" autocomplete="off">
+      <button class="btn" id="sendBtn">
+        <svg class="icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg>
+        发送
+      </button>
+    </div>
+  </section>
+</main>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const API = (location.origin.includes(":") && location.protocol.startsWith("http")) ? location.origin : "http://localhost:8000";
+
+function toast(msg){
+  const t=document.getElementById("toast"); t.textContent=msg; t.classList.add("show");
+  setTimeout(()=>t.classList.remove("show"),2200);
+}
+function addMsg(role, text, sources){
+  const log=document.getElementById("log");
+  const el=document.createElement("div"); el.className="msg "+role;
+  el.textContent=text;
+  if(sources && sources.length){
+    const wrap=document.createElement("div"); wrap.className="src";
+    const det=document.createElement("details"); det.open=false;
+    const sum=document.createElement("summary"); sum.textContent="引用来源 ("+sources.length+")";
+    const body=document.createElement("div");
+    sources.forEach(s=>{ const i=document.createElement("div"); i.className="item";
+      i.textContent="["+ (s.doc_id||"?") +"] "+ (s.text||"").slice(0,140); body.appendChild(i); });
+    det.appendChild(sum); det.appendChild(body); wrap.appendChild(det); el.appendChild(wrap);
+  }
+  log.appendChild(el); log.scrollTop=log.scrollHeight;
+}
+
+async function health(){
+  try{
+    const r=await fetch(API+"/health"); const d=await r.json();
+    document.getElementById("dot").classList.add("on");
+    document.getElementById("statusText").textContent="在线 · "+d.llm+" / "+d.embedder+" / "+d.vectorstore;
+  }catch(e){
+    document.getElementById("statusText").textContent="未连接 (启动服务见 README)";
+  }
+}
+
+async function send(){
+  const q=document.getElementById("q").value.trim(); if(!q) return;
+  document.getElementById("q").value=""; addMsg("user",q);
+  try{
+    const r=await fetch(API+"/chat",{method:"POST",headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({query:q,k:5,use_rag:true})});
+    const d=await r.json();
+    addMsg("assistant", d.answer||"(空响应)", d.sources||[]);
+  }catch(e){ addMsg("assistant","请求失败: "+e.message); }
+}
+
+async function ingest(){
+  const text=document.getElementById("ingestText").value.trim(); if(!text){ toast("请先粘贴文档内容"); return; }
+  try{
+    const r=await fetch(API+"/ingest",{method:"POST",headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({text, doc_id:"ui-"+Date.now()})});
+    const d=await r.json(); toast("已入库 "+ (d.chunks||0) +" 个分块");
+  }catch(e){ toast("入库失败: "+e.message); }
+}
+
+async function runEval(){
+  const out=document.getElementById("evalOut"); out.textContent="评估中…";
+  try{
+    const r=await fetch(API+"/eval"); const d=await r.json();
+    out.textContent="评估结果: 通过 "+d.passed+"/"+d.total+(d.ok?"（通过）":"（未通过）");
+  }catch(e){ out.textContent="评估失败: "+e.message; }
+}
+
+document.getElementById("sendBtn").onclick=send;
+document.getElementById("ingestBtn").onclick=ingest;
+document.getElementById("evalBtn").onclick=runEval;
+document.getElementById("q").addEventListener("keydown",e=>{ if(e.key==="Enter") send(); });
+health();
+</script>
+</body>
+</html>
