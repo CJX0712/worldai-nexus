@@ -1,5 +1,12 @@
 # WorldAI Nexus
 
+<p align="center">
+  <a href="https://github.com/CJX0712/worldai-nexus-0869/actions/workflows/ci.yml"><img src="https://github.com/CJX0712/worldai-nexus-0869/actions/workflows/ci.yml/badge.svg" alt="ci"></a>
+  <a href="https://github.com/CJX0712/worldai-nexus-0869/releases"><img src="https://img.shields.io/github/v/release/CJX0712/worldai-nexus-0869?sort=semver" alt="release"></a>
+  <a href="https://github.com/CJX0712/worldai-nexus-0869/blob/main/LICENSE"><img src="https://img.shields.io/github/license/CJX0712/worldai-nexus-0869" alt="license"></a>
+  <img src="https://img.shields.io/badge/author-%E6%99%A8%E6%98%9F-1f6feb" alt="author">
+</p>
+
 > 模块化、端到端可运行的本地优先 AI 系统。复用业界领先开源成果，按单一职责划分模块，每个模块以 Protocol 定义接口、运行时注入实现，可独立验证、可协同成链。
 
 - 作者：**晨星**
