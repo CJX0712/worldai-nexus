@@ -5,9 +5,10 @@ ENV PYTHONUNBUFFERED=1 \
     PYTHONDONTWRITEBYTECODE=1 \
     PIP_NO_CACHE_DIR=1
 
-# 先装核心依赖 (保证构建可靠)；生产 AI 后端请用 requirements-ai.txt 自行扩展
+# 核心依赖: requirements.txt 为最小闭包; numpy 是默认 CMD (api.main) 运行期必需,
+# 一并装入以保证镜像开箱即用 (requirements-ai.txt 的语义检索 / 本地模型后端仍按需扩展)。
 COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt numpy==2.5.3
 
 COPY . .
 
