@@ -1,9 +1,9 @@
 # WorldAI Nexus
 
 <p align="center">
-  <a href="https://github.com/CJX0712/worldai-nexus-0869/actions/workflows/ci.yml"><img src="https://github.com/CJX0712/worldai-nexus-0869/actions/workflows/ci.yml/badge.svg" alt="ci"></a>
-  <a href="https://github.com/CJX0712/worldai-nexus-0869/releases"><img src="https://img.shields.io/github/v/release/CJX0712/worldai-nexus-0869?sort=semver" alt="release"></a>
-  <a href="https://github.com/CJX0712/worldai-nexus-0869/blob/main/LICENSE"><img src="https://img.shields.io/github/license/CJX0712/worldai-nexus-0869" alt="license"></a>
+  <a href="https://github.com/CJX0712/worldai-nexus/actions/workflows/ci.yml"><img src="https://github.com/CJX0712/worldai-nexus/actions/workflows/ci.yml/badge.svg" alt="ci"></a>
+  <a href="https://github.com/CJX0712/worldai-nexus/releases"><img src="https://img.shields.io/github/v/release/CJX0712/worldai-nexus?sort=semver" alt="release"></a>
+  <a href="https://github.com/CJX0712/worldai-nexus/blob/main/LICENSE"><img src="https://img.shields.io/github/license/CJX0712/worldai-nexus" alt="license"></a>
   <img src="https://img.shields.io/badge/author-%E6%99%A8%E6%98%9F-1f6feb" alt="author">
 </p>
 
@@ -31,7 +31,7 @@
 ### 2.1 安装（核心，轻量）
 
 ```bash
-cd worldai-nexus-0869
+cd worldai-nexus
 python -m venv .venv && source .venv/bin/activate   # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
 ```
