@@ -7,9 +7,9 @@ readme = "README.md"
 requires-python = ">=3.10"
 license = { text = "MIT" }
 dependencies = [
-    "fastapi==0.141.1",
-    "uvicorn==0.53.0",
-    "pydantic==2.13.5",
+    "fastapi==0.143.0",
+    "uvicorn==0.54.0",
+    "pydantic==2.14.1",
     "loguru==0.7.3",
     "httpx==0.28.1",
 ]
@@ -17,12 +17,12 @@ dependencies = [
 [project.optional-dependencies]
 ai = [
     "numpy==2.5.3",
-    "faiss-cpu==1.15.0",
-    "fastembed==0.8.0",
-    "llama-cpp-python==0.3.19",
-    "pypdf==6.18.1",
+    "faiss-cpu==1.15.1",
+    "fastembed==0.9.0",
+    "llama-cpp-python==0.3.36",
+    "pypdf==6.20.0",
     "rank-bm25==0.2.2",
-    "sse-starlette==3.4.11",
+    "sse-starlette==3.5.0",
 ]
 
 [project.scripts]
